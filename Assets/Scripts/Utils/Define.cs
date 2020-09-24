@@ -49,7 +49,13 @@ public class Define
     Press,
     PointerDown, //처음 누르자마자 긴 시간 유지
     PointerUp, //PointerDown이후에 마우스를 떼어냄.
-    click,
+    click
+  }
+
+  public enum JoyStickEvent
+  {
+    Press,
+    Up
   }
 
   public enum CameraMode

@@ -10,6 +10,8 @@ public class InputManager
   public Action KeyAction = null;
   public Action<Define.MouseEvent> MouseAction = null;
 
+  public Action<Define.JoyStickEvent> JoyStickAction = null;
+
   bool _pressed = false;
   float _pressedTime = 0;
 
@@ -17,7 +19,14 @@ public class InputManager
   {
 
     if (EventSystem.current.IsPointerOverGameObject())
+    {
+      Debug.Log("UI click");
+      if (JoyStickAction != null)
+      {
+        JoyStickAction.Invoke(Define.JoyStickEvent.Press);
+      }
       return; //UI 클릭하면 리턴
+    }
 
     if (Input.anyKey && KeyAction != null)
       KeyAction.Invoke();
@@ -56,6 +65,7 @@ public class InputManager
   {
     KeyAction = null;
     MouseAction = null;
+    JoyStickAction = null;
   }
 
 
