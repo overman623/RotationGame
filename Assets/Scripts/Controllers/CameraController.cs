@@ -10,6 +10,8 @@ public class CameraController : MonoBehaviour
   [SerializeField]
   Vector3 _delta = new Vector3(0.0f, 6.0f, -5.0f);
   [SerializeField]
+  Quaternion _quaternion = Quaternion.Euler(40, 0, 0);
+  [SerializeField]
   GameObject _player = null;
 
   public void SetPlayer(GameObject player)
@@ -44,6 +46,7 @@ public class CameraController : MonoBehaviour
       {
         transform.position = _player.transform.position + _delta;
         transform.LookAt(_player.transform); //카메라가 플레이어의 좌표 주시
+        transform.rotation = _quaternion; //카메라의 각도 조절
       }
 
     }
