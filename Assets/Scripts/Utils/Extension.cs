@@ -23,4 +23,16 @@ public static class Extension
     return go || go.activeSelf;
   }
 
+  public static Vector3 LocalToGlobalTransVector(this Transform transform, Vector3 v)
+  {
+    transform.localPosition = v;
+    return transform.position;
+  }
+
+  public static Vector3 GlobalToLocalTransVector(this Transform transform, Vector3 v)
+  {
+    transform.position = v;
+    return transform.localPosition;
+  }
+
 }

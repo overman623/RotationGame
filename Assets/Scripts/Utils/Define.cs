@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class Define
 {
-  public enum WroldObject
+  public enum WorldObject
   {
     Unknown,
     Player,
@@ -22,14 +22,15 @@ public class Define
     Monster = 8,
     Ground = 9,
     Block = 10,
+    Floor = 11,
   }
   public enum Scene
   {
     Unknown,
-    Login,
+    Intro,
     Lobby,
     Game,
-    Main
+    Play,
   }
 
   public enum Sound

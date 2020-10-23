@@ -1,46 +1,135 @@
 ﻿using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class TestController : BaseController
 {
+  [SerializeField]
+  Stat _stat;
 
   [SerializeField] private UI_JoyStick Joystick;//Joystick reference for assign in inspector
-  [SerializeField] private float Speed = 5;
+  [SerializeField] private float Speed = 10;
+
+  [SerializeField] private GameObject BulletPos = null;
+  [SerializeField] private GameObject BulletCasePos = null;
+  [SerializeField] private GameObject SwordPos = null;
+  [SerializeField] private float SwordRange;
+  [SerializeField] private BoxCollider SwordCollider;
+
+  private Weapon _weapon = new Weapon();
+
+  //몬스터가 플레이어에 부딪히면 캐릭터가 밀린다.
   public override void Init()
   {
+    WroldObjectType = Define.WorldObject.Player;
+    _stat = gameObject.GetComponent<Stat>();
+
+    if (gameObject.GetComponentInChildren<UI_HPBar>() == null)
+      Managers.UI.MakeWorldSpaceUI<UI_HPBar>(transform); //transform에 붙는다.
+
+    GameObject goRoot = Managers.UI.Root;
+    Joystick = Util.FindChild<UI_JoyStick>(goRoot, "JoyStick", true);
+
+    _weapon.Parent = gameObject;
+    _weapon.AttachedWeapon(Weapon.WeaponType.Gun);
+
     Managers.Input.JoyStickAction -= DirectionChange;
     Managers.Input.JoyStickAction += DirectionChange;
   }
 
-  void Start()
-  {
-
-  }
-
-
   void Update()
   {
-
     if (!Joystick.isPress) return;
 
-    //Step #2
-    //Change Input.GetAxis (or the input that you using) to Joystick.Vertical or Joystick.Horizontal
     float v = Joystick.Vertical; //get the vertical value of joystick
-    float h = Joystick.Horizontal;//get the horizontal value of joystick
+    float h = Joystick.Horizontal; //get the horizontal value of joystick
 
-    //in case you using keys instead of axis (due keys are bool and not float) you can do this:
-    //bool isKeyPressed = (Joystick.Horizontal > 0) ? true : false;
-
-    //ready!, you not need more.
     Vector3 translate = (new Vector3(h, 0, v) * Time.deltaTime) * Speed;
     transform.Translate(translate, Space.World);
 
     transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(translate.normalized), 10 * Time.deltaTime);
   }
 
-  void DirectionChange(Define.JoyStickEvent evt)
+  public float GetSpeed()
   {
+    return Speed;
+  }
+
+  void DirectionChange(Define.JoyStickEvent evt) // 보류
+  {
+    if (evt == Define.JoyStickEvent.Up) return;
+  }
+
+  public void Attack(bool melee = false) //코루틴으로 구성해도 될것 같다.
+  {
+    if (!melee)
+    {
+      StartCoroutine("AttackGun");
+    }
+    else
+    {
+      StartCoroutine("AttackSword");
+
+    }
+  }
+  IEnumerator AttackGun()
+  {
+    // 원거리 근거리는 몬스터가 들어왔을 사거리로 나누거나.
+    // 버튼을 다르게 해서 판단하는게 좋음.
+
+
+    GameObject goBullet = Managers.Resource.Instantiate("Weapon/Bullet");
+    goBullet.transform.localRotation = BulletPos.transform.rotation;
+    goBullet.transform.position = BulletPos.transform.position;
+    Rigidbody bulletRigid = goBullet.GetComponent<Rigidbody>();
+    bulletRigid.velocity = goBullet.transform.forward * 50;
+    // 애니메이션 효과 추가
+
+    GameObject goBulletCase = Managers.Resource.Instantiate("Weapon/BulletCase");
+    goBulletCase.transform.localRotation = BulletCasePos.transform.rotation;
+    goBulletCase.transform.position = BulletCasePos.transform.position;
+    Rigidbody bulletCaseRigid = goBulletCase.GetComponent<Rigidbody>();
+    Vector3 caseVec = goBulletCase.transform.forward * Random.Range(-3, -2) + Vector3.left * Random.Range(-3, -2);
+    bulletCaseRigid.AddTorque(Vector3.up * 10, ForceMode.Impulse);
+    bulletCaseRigid.AddForce(caseVec, ForceMode.Impulse);
+
+    yield return null;
 
   }
+  IEnumerator AttackSword()
+  {
+    GameObject goSword = Util.FindChild(SwordPos, "Sword");
+    goSword.SetActive(true);
+    // 애니메이션 재생. //충돌 플래그 on
+    Animator anim = GetComponent<Animator>();
+    anim.CrossFadeInFixedTime("SWORD", 0.1f);
+
+    // GameObject goSword = Util.FindChild(SwordPos, "Sword");
+    // goSword.SetActive(false);
+
+
+    // GameObject goSword = Managers.Resource.Instantiate("Weapon/Sword");
+    // goSword.transform.localRotation = SwordPos.transform.rotation;
+    // Vector3 v = new Vector3(10, 0, 10);
+    // goSword.transform.localRotation = Quaternion.Slerp(SwordPos.transform.rotation, Quaternion.LookRotation(v.normalized), 10);
+    // goSword.transform.position = SwordPos.transform.position;
+    // Rigidbody swordRigid = goSword.GetComponent<Rigidbody>();
+    // GameObject.Destroy(goSword, 3);
+    // swordRigid.AddTorque(Vector3.up * 10, ForceMode.Impulse);
+
+    // yield return new WaitForSeconds(Random.Range(0, _spawnTime)); // 0~5 사이 숫자 반환 //시간동안 기다린후 다음줄 실행
+    yield return null; // 0~5 사이 숫자 반환 //시간동안 기다린후 다음줄 실행
+
+  }
+
+  void AttackEnd()
+  {
+    GameObject goSword = Util.FindChild(SwordPos, "Sword");
+    goSword.SetActive(false);
+  }
+
+  public void SetItem(Item item)
+  {
+    Managers.Data.setItemData(item);
+  }
+
 }

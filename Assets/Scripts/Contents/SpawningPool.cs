@@ -13,9 +13,9 @@ public class SpawningPool : MonoBehaviour
   int _keepMonsterCount = 0;
 
   [SerializeField]
-  Vector3 _spawnPos;
+  Vector3 _spawnPos = new Vector3(0, 0, 5.0f);
 
-  float _spawnRadius = 0; //_spawnPos에서 소환될 반경을 랜덤으로 정함.
+  float _spawnRadius = 1; //_spawnPos에서 소환될 반경을 랜덤으로 정함.
 
   float _spawnTime = 5.0f;
 
@@ -27,7 +27,6 @@ public class SpawningPool : MonoBehaviour
     Managers.Game.OnSpawnEvent -= AddMonsterCount;
     Managers.Game.OnSpawnEvent += AddMonsterCount;
   }
-
 
   void Update()
   {
@@ -42,7 +41,7 @@ public class SpawningPool : MonoBehaviour
     _reserveCount++;
     yield return new WaitForSeconds(Random.Range(0, _spawnTime)); // 0~5 사이 숫자 반환 //시간동안 기다린후 다음줄 실행
 
-    GameObject obj = Managers.Game.Spawn(Define.WroldObject.Monster, "Knight");
+    GameObject obj = Managers.Game.Spawn(Define.WorldObject.Monster, "Knight");
 
     NavMeshAgent nma = obj.GetOrAddComponent<NavMeshAgent>();
 

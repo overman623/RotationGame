@@ -11,7 +11,7 @@ public class PlayerController : BaseController
 
   public override void Init()
   {
-    WroldObjectType = Define.WroldObject.Player;
+    WroldObjectType = Define.WorldObject.Player;
     _stat = gameObject.GetComponent<PlayerStat>();
     Managers.Input.MouseAction -= OnMouseEvent; //다른데서 구독 신청하면 끊어버림
     Managers.Input.MouseAction += OnMouseEvent; //구독 추가

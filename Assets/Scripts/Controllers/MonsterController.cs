@@ -12,9 +12,20 @@ public class MonsterController : BaseController
   [SerializeField]
   float _attackRange = 2;
 
+  private Material _mat;
+
+  private void Awake()
+  {
+    Transform mesh = Util.FindChild<Transform>(gameObject, "mesh");
+    _mat = mesh.GetComponent<SkinnedMeshRenderer>().material;
+    // _mat = gameObject.GetComponent<MeshRenderer>().material;
+
+  }
+
   public override void Init()
   {
-    WroldObjectType = Define.WroldObject.Monster;
+
+    WroldObjectType = Define.WorldObject.Monster;
     _stat = gameObject.GetComponent<Stat>();
 
     if (gameObject.GetComponentInChildren<UI_HPBar>() == null)
@@ -105,6 +116,15 @@ public class MonsterController : BaseController
     else
     {
       State = Define.State.Idle;
+    }
+  }
+
+  public void OnDamaged(int damage)
+  {
+    _stat.Hp -= damage;
+    if (_stat.Hp <= 0)
+    {
+      Managers.Game.Despawn(gameObject);
     }
   }
 

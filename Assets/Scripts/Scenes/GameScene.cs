@@ -16,7 +16,7 @@ public class GameScene : BaseScene
 
     gameObject.GetOrAddComponent<CursorController>();
 
-    GameObject player = Managers.Game.Spawn(Define.WroldObject.Player, "UnityChan");
+    GameObject player = Managers.Game.Spawn(Define.WorldObject.Player, "UnityChan");
     Camera.main.gameObject.GetOrAddComponent<CameraController>().SetPlayer(player);
     //Managers.Game.Spawn(Define.WroldObject.Monster, "Knight");
 
@@ -28,6 +28,11 @@ public class GameScene : BaseScene
   }
 
   public override void Clear()
+  {
+
+  }
+
+  void Update()
   {
 
   }

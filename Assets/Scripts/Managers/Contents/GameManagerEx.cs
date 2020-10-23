@@ -19,18 +19,18 @@ public class GameManagerEx
     return _player;
   }
 
-  public GameObject Spawn(Define.WroldObject type, string path, Transform parent = null)
+  public GameObject Spawn(Define.WorldObject type, string path, Transform parent = null)
   {
     GameObject go = Managers.Resource.Instantiate(path, parent);
 
     switch (type)
     {
-      case Define.WroldObject.Monster:
+      case Define.WorldObject.Monster:
         _monsters.Add(go);
         if (OnSpawnEvent != null)
           OnSpawnEvent.Invoke(1);
         break;
-      case Define.WroldObject.Player:
+      case Define.WorldObject.Player:
         _player = go;
         break;
     }
@@ -38,20 +38,20 @@ public class GameManagerEx
     return go;
   }
 
-  public Define.WroldObject GetWroldObjectType(GameObject go)
+  public Define.WorldObject GetWroldObjectType(GameObject go)
   {
     BaseController bc = go.GetComponent<BaseController>();
     if (bc == null)
-      return Define.WroldObject.Unknown;
+      return Define.WorldObject.Unknown;
     return bc.WroldObjectType;
   }
 
   public void Despawn(GameObject go)
   {
-    Define.WroldObject type = GetWroldObjectType(go);
+    Define.WorldObject type = GetWroldObjectType(go);
     switch (type)
     {
-      case Define.WroldObject.Monster:
+      case Define.WorldObject.Monster:
         if (_monsters.Contains(go))
         {
           _monsters.Remove(go);
@@ -59,7 +59,7 @@ public class GameManagerEx
             OnSpawnEvent.Invoke(-1);
         }
         break;
-      case Define.WroldObject.Player:
+      case Define.WorldObject.Player:
         if (_player == go)
           _player = null;
         break;

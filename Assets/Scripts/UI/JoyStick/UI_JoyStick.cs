@@ -9,7 +9,7 @@ public class UI_JoyStick : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
 {
 
   [Header("Settings")]
-  [SerializeField, Range(1, 15)] private float Radio = 5;//the ratio of the circumference of the joystick
+  [SerializeField, Range(1, 25)] private float Radio = 5;//the ratio of the circumference of the joystick
   [SerializeField, Range(0.01f, 1)] private float SmoothTime = 0.5f;//return to default position speed
   [SerializeField, Range(0.5f, 4)] private float OnPressScale = 1.5f;//return to default position speed
   public Color NormalColor = new Color(1, 1, 1, 1);
@@ -18,8 +18,8 @@ public class UI_JoyStick : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
   [SerializeField, Range(0.1f, 5)] private float Duration = 1;
 
   [Header("Reference")]
-  [SerializeField] private RectTransform StickRect;//The middle joystick UI
-  [SerializeField] private RectTransform CenterReference;
+  [SerializeField] private RectTransform StickRect = null;//The middle joystick UI
+  [SerializeField] private RectTransform CenterReference = null;
 
   //Privates
   private Vector3 DeathArea;

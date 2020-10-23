@@ -31,7 +31,7 @@ public class CameraController : MonoBehaviour
     if (_mode == Define.CameraMode.QuarterView)
     {
 
-      if (_player.IsValid() == false)
+      if (_player == null || _player.IsValid() == false)
       {
         return;
       }

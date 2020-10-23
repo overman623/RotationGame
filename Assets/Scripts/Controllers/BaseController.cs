@@ -5,7 +5,7 @@ using UnityEngine;
 
 public abstract class BaseController : MonoBehaviour
 {
-  public Define.WroldObject WroldObjectType { get; protected set; } = Define.WroldObject.Unknown;
+  public Define.WorldObject WroldObjectType { get; protected set; } = Define.WorldObject.Unknown;
 
   [SerializeField]
   protected Vector3 _destPos;

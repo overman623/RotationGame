@@ -20,10 +20,12 @@ public class InputManager
 
     if (EventSystem.current.IsPointerOverGameObject())
     {
-      Debug.Log("UI click");
       if (JoyStickAction != null)
       {
-        JoyStickAction.Invoke(Define.JoyStickEvent.Press);
+        if (Input.GetMouseButton(0))
+          JoyStickAction.Invoke(Define.JoyStickEvent.Press);
+        else if (Input.GetMouseButton(1))
+          JoyStickAction.Invoke(Define.JoyStickEvent.Up);
       }
       return; //UI 클릭하면 리턴
     }
