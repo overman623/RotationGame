@@ -53,10 +53,11 @@ public class Define
     click
   }
 
-  public enum JoyStickEvent
+  public enum ClickEvent
   {
     Press,
-    Up
+    Up,
+    None,
   }
 
   public enum CameraMode

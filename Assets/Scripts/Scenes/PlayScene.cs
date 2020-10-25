@@ -12,7 +12,7 @@ public class PlayScene : BaseScene
     base.Init();
     SceneType = Define.Scene.Play;
 
-    Managers.UI.ShowSceneUI<UI_Play>(); //인벤토리 잠시 주석
+    Managers.UI.ShowSceneUI<UI_Play>();
     // Dictionary<int, Data.Stat> dict = Managers.Data.StatDict;
 
     // Transform rootTransform = Managers.UI.Root.transform;
@@ -25,7 +25,12 @@ public class PlayScene : BaseScene
 
     // rootTransform.SetParent(transform);
 
+    GameObject charater = Managers.Resource.Instantiate("Player/donggun");
     GameObject player = Managers.Game.Spawn(Define.WorldObject.Player, "Player");
+    player.GetOrAddComponent<TestController>().SetCharater(charater);
+    charater.transform.SetParent(player.transform);
+    Debug.Log(player.transform.GetChild(0).name);
+
     Camera.main.gameObject.GetOrAddComponent<CameraController>().SetPlayer(player);
 
     //Managers.Game.Spawn(Define.WroldObject.Monster, "Knight");

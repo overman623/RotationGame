@@ -10,7 +10,7 @@ public class InputManager
   public Action KeyAction = null;
   public Action<Define.MouseEvent> MouseAction = null;
 
-  public Action<Define.JoyStickEvent> JoyStickAction = null;
+  public Action<Define.ClickEvent> ClickAction = null;
 
   bool _pressed = false;
   float _pressedTime = 0;
@@ -20,12 +20,12 @@ public class InputManager
 
     if (EventSystem.current.IsPointerOverGameObject())
     {
-      if (JoyStickAction != null)
+      if (ClickAction != null)
       {
-        if (Input.GetMouseButton(0))
-          JoyStickAction.Invoke(Define.JoyStickEvent.Press);
-        else if (Input.GetMouseButton(1))
-          JoyStickAction.Invoke(Define.JoyStickEvent.Up);
+        if (Input.GetMouseButtonDown(0) || Input.GetMouseButton(0)) //왼쪽 마우스가 누르거나 눌른상태를 유지함.
+          ClickAction.Invoke(Define.ClickEvent.Press);
+        else if (Input.GetMouseButtonUp(0)) //왼쪽 마우스의 버튼이 놓아짐
+          ClickAction.Invoke(Define.ClickEvent.Up);
       }
       return; //UI 클릭하면 리턴
     }
@@ -67,7 +67,7 @@ public class InputManager
   {
     KeyAction = null;
     MouseAction = null;
-    JoyStickAction = null;
+    ClickAction = null;
   }
 
 

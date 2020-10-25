@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -17,7 +18,7 @@ public class PositionLerpAnimation : MonoBehaviour
   public bool topbottomAnim = false;
   RectTransform rectTransform;
 
-
+  public Action appearPlayer = null;
 
   private void OnEnable()
   {
@@ -49,8 +50,14 @@ public class PositionLerpAnimation : MonoBehaviour
       yield return null;
     }
 
+    onAnimatorEnd();
     yield return 0;
   }
 
+  void onAnimatorEnd()
+  {
+    if (appearPlayer != null)
+      appearPlayer.Invoke();
+  }
 
 }

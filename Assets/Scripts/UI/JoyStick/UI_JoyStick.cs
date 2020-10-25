@@ -24,7 +24,6 @@ public class UI_JoyStick : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
   //Privates
   private Vector3 DeathArea;
   private Vector3 currentVelocity;
-  private bool isFree = false;
   private int lastId = -2;
   private Image stickImage;
   private Image backImage;
@@ -32,6 +31,7 @@ public class UI_JoyStick : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
   private float diff;
   private Vector3 PressScaleVector;
 
+  public bool isFree { set; get; }
   public bool isPress { set; get; }
 
   /// <summary>
