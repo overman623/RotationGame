@@ -34,6 +34,10 @@ public class UI_JoyStick : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
   public bool isFree { set; get; }
   public bool isPress { set; get; }
 
+  public bool startDrag = false;
+
+  public Action<Boolean> StateAction;
+
   /// <summary>
   /// 
   /// </summary>
@@ -127,6 +131,7 @@ public class UI_JoyStick : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
   /// <param name="data"></param>
   public void OnDrag(PointerEventData data)
   {
+    isPress = true;
     //If this touch id is the first touch in the event
     if (data.pointerId == lastId)
     {
@@ -144,6 +149,13 @@ public class UI_JoyStick : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
         StickRect.position = DeathArea + (position - DeathArea).normalized * radio;
       }
     }
+
+    if (!startDrag)
+    {
+      startDrag = true;
+      if (StateAction != null)
+        StateAction.Invoke(startDrag);
+    }
   }
 
   /// <summary>
@@ -152,6 +164,9 @@ public class UI_JoyStick : MonoBehaviour, IPointerDownHandler, IPointerUpHandler
   /// <param name="data"></param>
   public void OnPointerUp(PointerEventData data)
   {
+    startDrag = false;
+    if (StateAction != null)
+      StateAction.Invoke(startDrag);
     isPress = false;
     isFree = true;
     currentVelocity = Vector3.zero;

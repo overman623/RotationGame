@@ -18,7 +18,6 @@ public class TestController : BaseController
   private Weapon _weapon = new Weapon();
 
   private GameObject _character;
-  private Define.ClickEvent _nowClickEvent = Define.ClickEvent.None;
 
   //몬스터가 플레이어에 부딪히면 캐릭터가 밀린다.
   public override void Init()
@@ -31,6 +30,8 @@ public class TestController : BaseController
 
     GameObject goRoot = Managers.UI.Root;
     _Joystick = Util.FindChild<UI_JoyStick>(goRoot, "JoyStick", true);
+    _Joystick.StateAction -= JoyStickAction;
+    _Joystick.StateAction += JoyStickAction;
 
     _weapon.Parent = gameObject;
     _weapon.AttachedWeapon(Weapon.WeaponType.Gun);
@@ -62,28 +63,37 @@ public class TestController : BaseController
     return Speed;
   }
 
+  void JoyStickAction(bool isDragStart)
+  {
+    Animator anim = _character.GetComponent<Animator>();
+    if (isDragStart)
+    {
+      Debug.Log("start Drag");
+      anim.CrossFade("WALK", 0.1f);
+    }
+    else
+    {
+      Debug.Log("end Drag");
+      anim.CrossFade("WAIT", 0.1f);
+
+    }
+  }
+
   void DirectionChange(Define.ClickEvent evt) // 보류
   {
-
-    if (_nowClickEvent == evt)
-    {
-      return;
-    }
-    _nowClickEvent = evt;
-
     //조이스틱을 클릭했을때 잡아야한다.
 
-    Animator anim = _character.GetComponent<Animator>();
-    if (evt == Define.ClickEvent.Press && _Joystick.isPress)
-    {
-      anim.CrossFadeInFixedTime("WALK", 0.1f);
-      Debug.Log("press");
-    }
-    else if (evt == Define.ClickEvent.Up && _Joystick.isFree)
-    {
-      anim.CrossFadeInFixedTime("WAIT", 0.1f);
-      Debug.Log("up");
-    }
+    // Animator anim = _character.GetComponent<Animator>();
+    // if (evt == Define.ClickEvent.Press && _Joystick.isPress)
+    // {
+    //   anim.CrossFade("WALK", 0.1f);
+    //   Debug.Log("press");
+    // }
+    // else if (evt == Define.ClickEvent.Up && _Joystick.isFree)
+    // {
+    //   anim.CrossFade("WAIT", 0.1f);
+    //   Debug.Log("up");
+    // }
   }
 
   public void Attack(bool melee = false) //코루틴으로 구성해도 될것 같다.
