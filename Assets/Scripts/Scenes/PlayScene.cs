@@ -25,11 +25,10 @@ public class PlayScene : BaseScene
 
     // rootTransform.SetParent(transform);
 
-    GameObject charater = Managers.Resource.Instantiate("Player/donggun");
-    GameObject player = Managers.Game.Spawn(Define.WorldObject.Player, "Player");
-    player.GetOrAddComponent<TestController>().SetCharater(charater);
-    charater.transform.SetParent(player.transform);
-    Debug.Log(player.transform.GetChild(0).name);
+    GameObject player = Managers.Game.Spawn(Define.WorldObject.Player, "Player/donggun"); //캐릭터 객체의 프리펩 이름을 가져온다.
+    // player.GetOrAddComponent<TestController>().SetCharater(charater);
+    // charater.transform.SetParent(player.transform);
+    Debug.Log(player.transform.name);
 
     Camera.main.gameObject.GetOrAddComponent<CameraController>().SetPlayer(player);
 
@@ -37,7 +36,7 @@ public class PlayScene : BaseScene
 
     GameObject goSpawningPool = new GameObject { name = "SpawningPool" };
     SpawningPool pool = goSpawningPool.GetOrAddComponent<SpawningPool>();
-    pool.SetKeepMonsterCount(1);
+    // pool.SetKeepMonsterCount(1);
 
   }
 

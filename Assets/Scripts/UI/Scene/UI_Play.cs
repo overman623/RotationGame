@@ -20,19 +20,12 @@ public class UI_Play : UI_Scene
     JoyStick,
   }
 
-  GameObject player = null;
-
-  private void SetPlayer()
-  {
-    if (player == null)
-    {
-      player = Managers.Game.GetPlayer();
-    }
-  }
+  private GameObject player = null;
 
   public override void Init()
   {
     base.Init();
+    player = Managers.Game.GetPlayer();
 
     Bind<Button>(typeof(Buttons));
     Bind<GameObject>(typeof(GameObjects));
@@ -53,14 +46,12 @@ public class UI_Play : UI_Scene
 
   public void OnGunButtonClicked(PointerEventData data)
   {
-    SetPlayer();
     TestController test = player.transform.GetComponent<TestController>();
     test.Attack();
   }
 
   public void OnSwordButtonClicked(PointerEventData data)
   {
-    SetPlayer();
     TestController test = player.transform.GetComponent<TestController>();
     test.Attack(true);
   }

@@ -31,7 +31,13 @@ public abstract class BaseController : MonoBehaviour
         case Define.State.Moving:
           anim.CrossFade("RUN", 0.1f);
           break;
-        case Define.State.Skill:
+        case Define.State.Melee:
+          anim.CrossFade("MELEE", 0.1f);
+          break;
+        case Define.State.Range:
+          anim.CrossFade("RANGE", 0.1f);
+          break;
+        case Define.State.Skill: //버튼을 누르고 있는동안 변하지 않게 만들면 될것 같다.
           anim.CrossFade("ATTACK", 0.1f, -1, 0); //첫 위치부터 다시 재생(반복재생)
           break;
       }
@@ -56,6 +62,12 @@ public abstract class BaseController : MonoBehaviour
       case Define.State.Idle:
         UpdateIdle();
         break;
+      case Define.State.Melee:
+        UpdateMelee();
+        break;
+      case Define.State.Range:
+        UpdateRange();
+        break;
       case Define.State.Skill:
         UpdateSkill();
         break;
@@ -67,6 +79,8 @@ public abstract class BaseController : MonoBehaviour
   protected virtual void UpdateDie() { }
   protected virtual void UpdateMoving() { }
   protected virtual void UpdateIdle() { }
+  protected virtual void UpdateMelee() { }
+  protected virtual void UpdateRange() { }
   protected virtual void UpdateSkill() { }
 
 }

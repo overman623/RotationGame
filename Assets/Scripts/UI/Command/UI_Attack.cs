@@ -17,15 +17,15 @@ public class UI_Attack : MonoBehaviour
 
   public void AttackGun()
   {
-    SetPlayer();
-    TestController test = player.transform.GetComponent<TestController>();
-    test.Attack();
+    // SetPlayer();
+    // TestController test = player.transform.GetComponent<TestController>();
+    // test.Attack();
   }
 
   public void AttackSword()
   {
-    SetPlayer();
-    TestController test = player.transform.GetComponent<TestController>();
-    test.Attack(true);
+    // SetPlayer();
+    // TestController test = player.transform.GetComponent<TestController>();
+    // test.Attack(true);
   }
 }

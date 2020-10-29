@@ -6,9 +6,9 @@ using UnityEngine.EventSystems;
 public class MainMenuManager : MonoBehaviour
 {
   [SerializeField]
-  GameObject VisiblePlayerObject;
+  GameObject VisiblePlayerObject = null;
   [SerializeField]
-  GameObject MainMenuObject;
+  GameObject MainMenuObject = null;
   private void Start()
   {
     Debug.Log("Start");

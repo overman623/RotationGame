@@ -15,6 +15,8 @@ public class Define
     Die,
     Moving,
     Idle,
+    Melee,
+    Range,
     Skill
   }
   public enum Layer

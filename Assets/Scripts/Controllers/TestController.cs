@@ -1,7 +1,8 @@
 ﻿using System.Collections;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
-public class TestController : BaseController
+public class TestController : BaseController, IPointerClickHandler
 {
   [SerializeField]
   Stat _stat;
@@ -12,12 +13,16 @@ public class TestController : BaseController
   [SerializeField] private GameObject BulletPos = null;
   [SerializeField] private GameObject BulletCasePos = null;
   [SerializeField] private GameObject SwordPos = null;
-  [SerializeField] private float SwordRange;
-  [SerializeField] private BoxCollider SwordCollider;
+  [SerializeField] private float SwordRange = 0;
+  [SerializeField] private BoxCollider SwordCollider = null;
 
-  private Weapon _weapon = new Weapon();
+  [SerializeField] private GameObject _weaponPos = null;
+
+  private Weapon _weapon = null;
 
   private GameObject _character;
+
+  private bool startDrag = false;
 
   //몬스터가 플레이어에 부딪히면 캐릭터가 밀린다.
   public override void Init()
@@ -30,32 +35,32 @@ public class TestController : BaseController
 
     GameObject goRoot = Managers.UI.Root;
     _Joystick = Util.FindChild<UI_JoyStick>(goRoot, "JoyStick", true);
-    _Joystick.StateAction -= JoyStickAction;
-    _Joystick.StateAction += JoyStickAction;
 
-    _weapon.Parent = gameObject;
-    _weapon.AttachedWeapon(Weapon.WeaponType.Gun);
+    //무기를 장착 시켜야함.
+    //총을 가져와서 총의 위치에 장착 시켜줘야함.
 
-    Managers.Input.ClickAction -= DirectionChange;
-    Managers.Input.ClickAction += DirectionChange;
+    // _weapon.Parent = gameObject;
+    // _weapon.AttachedWeapon(Weapon.WeaponType.Range);
+
+    //무기의 위치를 정의 해야함.
+    AttachedWeapon();
   }
 
-  internal void SetCharater(GameObject character)
+  public void AttachedWeapon(int num = 0)
   {
-    _character = character;
-  }
 
-  void Update()
-  {
-    if (!_Joystick.isPress) return;
+    // Weapon weapon = new Weapon(num);
+    // weapon.Attached(_weaponPos); //나중에 사용한다.
 
-    float v = _Joystick.Vertical; //get the vertical value of joystick
-    float h = _Joystick.Horizontal; //get the horizontal value of joystick
+    // GameObject gun = Managers.Resource.Instantiate("Weapon/Gun");
+    // gun.transform.localPosition = _weaponPos.transform.position;
+    // gun.transform.SetParent(_weaponPos.transform);
 
-    Vector3 translate = (new Vector3(h, 0, v) * Time.deltaTime) * Speed;
-    transform.Translate(translate, Space.World);
-
-    transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(translate.normalized), 10 * Time.deltaTime);
+    GameObject sword = Managers.Resource.Instantiate("Weapon/Sword");
+    sword.transform.localPosition = _weaponPos.transform.position;
+    sword.transform.localPosition += new Vector3(0, 0, 1);
+    sword.transform.rotation = Quaternion.LookRotation(Vector3.zero, new Vector3(0, 0, -45));
+    sword.transform.SetParent(_weaponPos.transform);
   }
 
   public float GetSpeed()
@@ -63,56 +68,65 @@ public class TestController : BaseController
     return Speed;
   }
 
-  void JoyStickAction(bool isDragStart)
+  protected override void UpdateIdle()
   {
-    Animator anim = _character.GetComponent<Animator>();
-    if (isDragStart)
+    if (!startDrag && _Joystick.isPress) //버튼을 누르면 move로 바뀌게된다.
     {
-      Debug.Log("start Drag");
-      anim.CrossFade("WALK", 0.1f);
+      startDrag = true;
+      State = Define.State.Moving;
     }
-    else
-    {
-      Debug.Log("end Drag");
-      anim.CrossFade("WAIT", 0.1f);
 
-    }
+  }
+  public void AttackAnimationEnd()
+  {
+    State = Define.State.Idle;
   }
 
-  void DirectionChange(Define.ClickEvent evt) // 보류
+  protected override void UpdateMoving()
   {
-    //조이스틱을 클릭했을때 잡아야한다.
+    if (!_Joystick.isPress)
+    {
+      startDrag = false;
+      State = Define.State.Idle;
+      return;
+    }
 
-    // Animator anim = _character.GetComponent<Animator>();
-    // if (evt == Define.ClickEvent.Press && _Joystick.isPress)
-    // {
-    //   anim.CrossFade("WALK", 0.1f);
-    //   Debug.Log("press");
-    // }
-    // else if (evt == Define.ClickEvent.Up && _Joystick.isFree)
-    // {
-    //   anim.CrossFade("WAIT", 0.1f);
-    //   Debug.Log("up");
-    // }
+    float v = _Joystick.Vertical; //get the vertical value of joystick
+    float h = _Joystick.Horizontal; //get the horizontal value of joystick
+
+    Vector3 translate = (new Vector3(h, 0, v) * Time.deltaTime) * Speed;
+    transform.Translate(translate, Space.World);
+
+    transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(new Vector3(-h, 180, -v).normalized), 10 * Time.deltaTime);
   }
 
   public void Attack(bool melee = false) //코루틴으로 구성해도 될것 같다.
   {
     if (!melee)
     {
-      StartCoroutine("AttackGun");
+      State = Define.State.Range;
+      // StartCoroutine("AttackRange");
     }
     else
     {
-      StartCoroutine("AttackSword");
+      // 검 장착
+      State = Define.State.Melee;
+      // StartCoroutine("AttackMelee");
     }
   }
-  IEnumerator AttackGun()
+
+  protected override void UpdateMelee()
+  {
+    Debug.Log("UpdateMelee");
+  }
+  protected override void UpdateRange()
+  {
+    Debug.Log("UpdateRange");
+  }
+  IEnumerator AttackRange()
   {
     // 원거리 근거리는 몬스터가 들어왔을 사거리로 나누거나.
     // 버튼을 다르게 해서 판단하는게 좋음.
-    Animator _anim = _character.GetComponent<Animator>();
-    _anim.CrossFadeInFixedTime("RANGE", 0.1f);
 
     GameObject goBullet = Managers.Resource.Instantiate("Weapon/Bullet");
     goBullet.transform.localRotation = BulletPos.transform.rotation;
@@ -131,7 +145,7 @@ public class TestController : BaseController
     yield return null;
 
   }
-  IEnumerator AttackSword()
+  IEnumerator AttackMelee()
   {
 
     GameObject goSword = Util.FindChild(SwordPos, "Sword");
@@ -139,9 +153,6 @@ public class TestController : BaseController
     // 애니메이션 재생. //충돌 플래그 on
     Animator anim = GetComponent<Animator>();
     anim.CrossFadeInFixedTime("SWORD", 0.1f);
-
-    Animator _anim = _character.GetComponent<Animator>();
-    _anim.CrossFadeInFixedTime("MELEE", 0.1f);
 
     // GameObject goSword = Util.FindChild(SwordPos, "Sword");
     // goSword.SetActive(false);
@@ -167,9 +178,18 @@ public class TestController : BaseController
     goSword.SetActive(false);
   }
 
-  public void SetItem(Item item)
+  public void SetItem(Item item) //아이템을 먹은 경우.
   {
     Managers.Data.setItemData(item);
   }
 
+  public void SetWeapon(GameObject weapon)
+  {
+    _weaponPos = weapon;
+  }
+
+  public void OnPointerClick(PointerEventData eventData)
+  {
+    Debug.Log("test ok");
+  }
 }
